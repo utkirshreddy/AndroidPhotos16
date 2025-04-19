@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/AlbumsFragment">
 
     <fragment
         android:id="@+id/FirstFragment"
@@ -25,4 +25,9 @@
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/AlbumsFragment"
+        android:name="com.example.photos.AlbumsFragment"
+        android:label="Albums"
+        tools:layout="@layout/fragment_albums" />
 </navigation>
