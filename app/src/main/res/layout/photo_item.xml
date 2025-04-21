@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/photo_image"
+            android:id="@+id/photo_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="150dp"
+            android:contentDescription="Photo thumbnail"
             android:scaleType="centerCrop"
-            android:contentDescription="Photo"
-            tools:src="@android:drawable/ic_menu_gallery" />
+            android:src="@drawable/placeholder_photo" />
 
-        <ImageView
-            android:id="@+id/photo_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:padding="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_more"
-            android:contentDescription="Photo options" />
-
-        <TextView
-            android:id="@+id/photo_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/photo_image"
-            android:padding="8dp"
-            android:textSize="14sp"
-            tools:text="Photo Title" />
-    </RelativeLayout>
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/photo_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Photo Title"
+                android:textSize="14sp" />
+
+            <ImageButton
+                android:id="@+id/photo_options"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Photo options"
+                android:src="@android:drawable/ic_menu_more" />
+        </LinearLayout>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

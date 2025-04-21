@@ -1,100 +1,92 @@
 package com.example.photos;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.photos.models.Album;
+import com.example.photos.models.Photo;
+
+import java.io.IOException;
 import java.util.List;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder> {
 
+    private final Context context;
     private final List<Album> albums;
+    private OnAlbumClickListener onAlbumClickListener;
+    private OnOptionsClickListener onOptionsClickListener;
 
-    // Interface for album operations
-    public interface AlbumActionListener {
-        void onRenameAlbum(Album album, int position);
-        void onDeleteAlbum(Album album, int position);
+    // set albums
+    public void setAlbums(List<Album> albums) {
+        this.albums.clear();
+        this.albums.addAll(albums);
+        notifyDataSetChanged();
+    }
+    public interface OnAlbumClickListener {
+        void onAlbumClick(int position);
     }
 
-    private AlbumActionListener actionListener;
+    public interface OnOptionsClickListener {
+        void onOptionsClick(int position);
+    }
 
-    public AlbumAdapter(List<Album> albums) {
+    public AlbumAdapter(Context context, List<Album> albums) {
+        this.context = context;
         this.albums = albums;
     }
 
-    public void setAlbumActionListener(AlbumActionListener listener) {
-        this.actionListener = listener;
+    public void setOnAlbumClickListener(OnAlbumClickListener listener) {
+        this.onAlbumClickListener = listener;
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(Album album);
-    }
-
-    private OnItemClickListener itemClickListener;
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.itemClickListener = listener;
+    public void setOnOptionsClickListener(OnOptionsClickListener listener) {
+        this.onOptionsClickListener = listener;
     }
 
     @NonNull
     @Override
     public AlbumViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.album_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.album_item, parent, false);
         return new AlbumViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull AlbumViewHolder holder, int position) {
         Album album = albums.get(position);
-        holder.titleTextView.setText(album.getTitle());
+        holder.albumTitle.setText(album.getName());
 
-        if (album.getThumbnail() != null) {
-            holder.thumbnailImageView.setImageBitmap(album.getThumbnail());
-        } else {
-            // Set a default placeholder image
-            holder.thumbnailImageView.setImageResource(R.drawable.ic_launcher_foreground);
+        // Try to load actual thumbnail if available
+
+        String thumbnailPath = album.getThumbnailPath();
+        Log.d("AlbumAdapter", "Loading thumbnail for " + album.getName() + ": " + thumbnailPath);
+
+        // Check if thumbnailPath is null before trying to parse it
+        if (thumbnailPath == null || thumbnailPath.isEmpty()) {
+            holder.albumThumbnail.setImageResource(R.drawable.placeholder_album);
+            return;
         }
 
-        // Setup menu click listener
-        holder.menuImageView.setOnClickListener(v -> {
-            showPopupMenu(holder.menuImageView, album, position);
-        });
-
-        holder.itemView.setOnClickListener(v -> {
-            if (itemClickListener != null) {
-                itemClickListener.onItemClick(album);
-            }
-        });
-    }
-
-    private void showPopupMenu(View view, Album album, int position) {
-        PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
-        popupMenu.inflate(R.menu.album_menu);
-        popupMenu.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.action_rename) {
-                if (actionListener != null) {
-                    actionListener.onRenameAlbum(album, position);
-                }
-                return true;
-            } else if (id == R.id.action_delete) {
-                if (actionListener != null) {
-                    actionListener.onDeleteAlbum(album, position);
-                }
-                return true;
-            }
-            return false;
-        });
-        popupMenu.show();
+        try {
+            Uri thumbnailUri = Uri.parse(thumbnailPath);
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), thumbnailUri);
+            holder.albumThumbnail.setImageBitmap(bitmap);
+        } catch (SecurityException | IOException e) {
+            // Handle permission errors by using a placeholder
+            holder.albumThumbnail.setImageResource(R.drawable.placeholder_album);
+            Log.e("AlbumAdapter", "Error loading thumbnail for " + album.getName(), e);
+        }
     }
 
     @Override
@@ -102,16 +94,32 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
         return albums.size();
     }
 
-    static class AlbumViewHolder extends RecyclerView.ViewHolder {
-        ImageView thumbnailImageView;
-        TextView titleTextView;
-        ImageView menuImageView;
+    public void refreshData() {
+        notifyDataSetChanged();
+    }
+
+    class AlbumViewHolder extends RecyclerView.ViewHolder {
+        ImageView albumThumbnail;
+        TextView albumTitle;
+        ImageButton albumOptions;
 
         public AlbumViewHolder(@NonNull View itemView) {
             super(itemView);
-            thumbnailImageView = itemView.findViewById(R.id.album_thumbnail);
-            titleTextView = itemView.findViewById(R.id.album_title);
-            menuImageView = itemView.findViewById(R.id.album_menu);
+            albumThumbnail = itemView.findViewById(R.id.album_thumbnail);
+            albumTitle = itemView.findViewById(R.id.album_title);
+            albumOptions = itemView.findViewById(R.id.album_options);
+
+            itemView.setOnClickListener(v -> {
+                if (onAlbumClickListener != null) {
+                    onAlbumClickListener.onAlbumClick(getAdapterPosition());
+                }
+            });
+
+            albumOptions.setOnClickListener(v -> {
+                if (onOptionsClickListener != null) {
+                    onOptionsClickListener.onOptionsClick(getAdapterPosition());
+                }
+            });
         }
     }
 }

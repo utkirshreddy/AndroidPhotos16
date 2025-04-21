@@ -1,99 +1,87 @@
 package com.example.photos;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.photos.models.Photo;
+
+import java.io.IOException;
 import java.util.List;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
 
+    private final Context context;
     private final List<Photo> photos;
+    private OnPhotoClickListener onPhotoClickListener;
+    private OnPhotoLongClickListener onPhotoLongClickListener;
 
-    // Interface for photo operations
-    public interface PhotoActionListener {
-        void onDeletePhoto(Photo photo, int position);
-        void onMovePhoto(Photo photo, int position);
+    public interface OnPhotoClickListener {
+        void onPhotoClick(int position);
     }
 
-    private PhotoActionListener actionListener;
-    private OnPhotoClickListener clickListener;
+    public interface OnPhotoLongClickListener {
+        boolean onPhotoLongClick(int position);
+    }
 
-    public void setPhotoActionListener(PhotoActionListener listener) {
-        this.actionListener = listener;
+    public PhotoAdapter(Context context, List<Photo> photos) {
+        this.context = context;
+        this.photos = photos;
     }
 
     public void setOnPhotoClickListener(OnPhotoClickListener listener) {
-        this.clickListener = listener;
+        this.onPhotoClickListener = listener;
     }
 
-    public PhotoAdapter(List<Photo> photos) {
-        this.photos = photos;
+    public void setOnPhotoLongClickListener(OnPhotoLongClickListener listener) {
+        this.onPhotoLongClickListener = listener;
     }
 
     @NonNull
     @Override
     public PhotoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.photo_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.photo_item, parent, false);
         return new PhotoViewHolder(view);
-    }
-
-    // Interface for photo click
-    public interface OnPhotoClickListener {
-        void onPhotoClick(Photo photo);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PhotoViewHolder holder, int position) {
         Photo photo = photos.get(position);
-        holder.titleTextView.setText(photo.getTitle());
 
-        if (photo.getImage() != null) {
-            holder.imageView.setImageBitmap(photo.getImage());
-        } else {
-            // Set default placeholder
-            holder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
+        holder.photoTitle.setText(photo.getTitle());
+        Log.d("PHOTOADAPT", "onBindViewHolder: " + photo.getPath());
+
+
+        try {
+            Uri photoUri = Uri.parse(photo.getPath());
+            String extension = photo.getFileExtension().toLowerCase();
+
+
+            // Check if this is a Photo Picker URI
+            if (photoUri.toString().contains("content://media/picker")) {
+                // For Photo Picker URIs, use a placeholder instead of trying to access
+                holder.photoThumbnail.setImageResource(R.drawable.placeholder_photo);
+            } else {
+                // For other URIs, try to load normally
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), photoUri);
+                holder.photoThumbnail.setImageBitmap(bitmap);
+            }
+        } catch (SecurityException | IOException e) {
+            // Handle permission errors by using a placeholder
+            holder.photoThumbnail.setImageResource(R.drawable.placeholder_photo);
+            e.printStackTrace();
         }
-
-        // Setup menu
-        holder.menuImageView.setOnClickListener(v -> {
-            showPopupMenu(holder.menuImageView, photo, position);
-        });
-
-        // Setup item click
-        holder.itemView.setOnClickListener(v -> {
-            if (clickListener != null) {
-                clickListener.onPhotoClick(photo);
-            }
-        });
-    }
-
-    private void showPopupMenu(View view, Photo photo, int position) {
-        PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
-        popupMenu.inflate(R.menu.photo_menu);
-        popupMenu.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.action_delete_photo) {
-                if (actionListener != null) {
-                    actionListener.onDeletePhoto(photo, position);
-                }
-                return true;
-            } else if (id == R.id.action_move_photo) {
-                if (actionListener != null) {
-                    actionListener.onMovePhoto(photo, position);
-                }
-                return true;
-            }
-            return false;
-        });
-        popupMenu.show();
     }
 
     @Override
@@ -101,16 +89,45 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         return photos.size();
     }
 
-    static class PhotoViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
-        TextView titleTextView;
-        ImageView menuImageView;
+    // set photo
+    public void setPhotos(List<Photo> photos) {
+        this.photos.clear();
+        this.photos.addAll(photos);
+        notifyDataSetChanged();
+    }
+
+    class PhotoViewHolder extends RecyclerView.ViewHolder {
+        ImageView photoThumbnail;
+        TextView photoTitle;
+        ImageButton photoOptions;
 
         public PhotoViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.photo_image);
-            titleTextView = itemView.findViewById(R.id.photo_title);
-            menuImageView = itemView.findViewById(R.id.photo_menu);
+            photoThumbnail = itemView.findViewById(R.id.photo_thumbnail);
+            photoTitle = itemView.findViewById(R.id.photo_title);
+            photoOptions = itemView.findViewById(R.id.photo_options);
+
+            itemView.setOnClickListener(v -> {
+                if (onPhotoClickListener != null) {
+                    onPhotoClickListener.onPhotoClick(getAdapterPosition());
+                }
+            });
+
+            itemView.setOnLongClickListener(v -> {
+                if (onPhotoLongClickListener != null) {
+                    return onPhotoLongClickListener.onPhotoLongClick(getAdapterPosition());
+                }
+                return false;
+            });
+
+            // If using options button instead of long press
+            if (photoOptions != null) {
+                photoOptions.setOnClickListener(v -> {
+                    if (onPhotoLongClickListener != null) {
+                        onPhotoLongClickListener.onPhotoLongClick(getAdapterPosition());
+                    }
+                });
+            }
         }
     }
 }

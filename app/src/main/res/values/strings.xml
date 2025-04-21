@@ -1,15 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Photos</string>
-    <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
+    <string name="action_search">Search</string>
+    <string name="no_albums">No albums found</string>
+    <string name="no_photos">No photos in this album</string>
+    <string name="create_album">Create Album</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="delete_album">Delete Album</string>
+    <string name="rename_album">Rename Album</string>
+    <string name="photo_options">Photo Options</string>
+    <string name="add_tag">Add Tag</string>
+    <string name="move_photo">Move Photo</string>
+    <string name="delete_photo">Delete Photo</string>
+    <string name="tag_person">Person</string>
+    <string name="tag_location">Location</string>
+    <string name="search_photos">Search Photos</string>
+    <string name="search">Search</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="and">AND</string>
+    <string name="or">OR</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="confirm">Confirm</string>
+
+    <!-- Add missing strings -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
     <string name="previous">Previous</string>
-
-    <!-- Add to res/values/strings.xml -->
-    <string name="app_title">Photos</string>
-    <string name="tab_albums">Albums</string>
-    <string name="tab_search">Search</string>
-    <string name="add_album">Add Album</string>
+    <string name="action_settings">Settings</string>
 </resources>
