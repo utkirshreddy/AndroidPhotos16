@@ -17,6 +17,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 public class StorageManager {
     private static final String TAG = "StorageManager";
     private static final String ALBUMS_FILE = "albums.json";

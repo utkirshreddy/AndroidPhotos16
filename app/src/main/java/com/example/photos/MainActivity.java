@@ -34,50 +34,41 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Initialize toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Initialize storage manager
         storageManager = new StorageManager(this);
 
-        // Initialize views
         albumsRecyclerView = findViewById(R.id.albums_recycler_view);
         emptyView = findViewById(R.id.empty_view);
         FloatingActionButton fabCreateAlbum = findViewById(R.id.fab_create_album);
 
-        // Load existing albums
         albums = storageManager.loadAlbums();
-
-        // Setup RecyclerView
         albumAdapter = new AlbumAdapter(this, albums);
         albumsRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         albumsRecyclerView.setAdapter(albumAdapter);
 
-        // Update UI based on albums list
         updateEmptyView();
-
-        // Set FAB click listener
         fabCreateAlbum.setOnClickListener(v -> showCreateAlbumDialog());
-
-        // Set click listener for album items
         albumAdapter.setOnAlbumClickListener(position -> {
             Album album = albums.get(position);
             Intent intent = new Intent(MainActivity.this, AlbumViewActivity.class);
+
             intent.putExtra("ALBUM_ID", album.getId());
             intent.putExtra("ALBUM_NAME", album.getName());
             startActivity(intent);
         });
 
-        // Set options click listener
+
         albumAdapter.setOnOptionsClickListener(position -> {
             showAlbumOptionsMenu(position);
         });
     }
 
     private void updateEmptyView() {
-        if (albums.isEmpty()) {
+        boolean isAlbumListEmpty = albums.isEmpty();
+
+        if (isAlbumListEmpty == true) {
             albumsRecyclerView.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
         } else {
@@ -101,20 +92,23 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Album name cannot be empty", Toast.LENGTH_SHORT).show();
                 return;
             }
+            boolean nameExists = false;
+            for (Album album : albums) {
+                if (album.getName().equalsIgnoreCase(albumName)) {
+                    nameExists = true;
+                    break;
+                }
+            }
+            if (nameExists) {
+                Toast.makeText(this, "Album name already exists", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-
-
-            // Create new album
             Album newAlbum = new Album(albumName);
             albums.add(newAlbum);
 
-            // Save albums to storage
             storageManager.saveAlbums(albums);
-
-            // Notify adapter about the new album
             albumAdapter.setAlbums(albums);
-
-            // Update UI
             albumAdapter.notifyItemInserted(albums.size() - 1);
             updateEmptyView();
 

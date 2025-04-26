@@ -193,7 +193,7 @@ public class AlbumViewActivity extends AppCompatActivity {
                 currentAlbum.setThumbnailPath(null);
             }
 
-            currentAlbum.removePhoto(position);
+            Photo removedPhoto = currentAlbum.removePhoto(position);
             // Update the album thumbnail (set it to the first photo or placeholder)
             //currentAlbum.setFirstPhotoAsThumbnail();
             photoAdapter.notifyItemRemoved(position);
@@ -298,7 +298,7 @@ public class AlbumViewActivity extends AppCompatActivity {
         targetAlbum.addPhoto(photoToMove);
 
         // Remove from current album
-        currentAlbum.removePhoto(position);
+        Photo removedPhoto = currentAlbum.removePhoto(position);
 
         // Update UI
         photoAdapter.notifyItemRemoved(position);
