@@ -42,10 +42,7 @@ import java.io.InputStream;
 
 import com.bumptech.glide.Glide;
 
-/**
- * Photo View Activity - Displays a single photo with navigation controls
- * User can view photo details, navigate through album, and manage photo tags
- */
+
 public class PhotoViewActivity extends AppCompatActivity {
 
     // UI Components
@@ -70,7 +67,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_view);
 
-        // Initialize UI components
+
         toolbar = findViewById(R.id.photo_toolbar);
         photoDisplay = findViewById(R.id.photo_display);
         photoTags = findViewById(R.id.photo_tags);
@@ -78,31 +75,32 @@ public class PhotoViewActivity extends AppCompatActivity {
         btnNext = findViewById(R.id.btn_next);
         fabPhotoOptions = findViewById(R.id.fab_photo_options);
 
-        // Set up toolbar
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
-        // Get data from intent
+
         Intent intent = getIntent();
         albumPhotos = (List<Photo>) intent.getSerializableExtra(EXTRA_ALBUM_PHOTOS);
         currentPhotoPosition = intent.getIntExtra(EXTRA_PHOTO_POSITION, 0);
 
-        // If no photos were passed, create an empty list
+
         if (albumPhotos == null) {
             albumPhotos = new ArrayList<>();
         }
 
-        // Set up click listeners
+
         btnPrevious.setOnClickListener(v -> showPreviousPhoto());
         btnNext.setOnClickListener(v -> showNextPhoto());
         fabPhotoOptions.setOnClickListener(v -> showPhotoOptionsDialog());
 
-        // Display the current photo
+
         displayPhoto();
     }
 
+    //
     private String getOriginalFileName(Uri uri) {
         String result = null;
         if ("content".equals(uri.getScheme())) {
@@ -130,20 +128,18 @@ public class PhotoViewActivity extends AppCompatActivity {
         return result;
     }
 
+    //
     private Uri saveImageToAppStorage(Uri sourceUri) {
         try {
-            // Get original filename first
             String originalFileName = getOriginalFileName(sourceUri);
             String fileExtension = getFileExtension(sourceUri);
 
             if (fileExtension == null || fileExtension.isEmpty()) {
-                fileExtension = "jpg"; // Default extension
+                fileExtension = "jpg";
             }
 
-            // Create a unique filename for storage with extension
-            String fileName = "photo_" + System.currentTimeMillis() + "." + fileExtension;
+            String fileName = "photo-" + System.currentTimeMillis() + "." + fileExtension;
 
-            // Try to take persistent permission if needed
             try {
                 if ("content".equals(sourceUri.getScheme())) {
                     getContentResolver().takePersistableUriPermission(
@@ -154,15 +150,12 @@ public class PhotoViewActivity extends AppCompatActivity {
                 Log.w("PhotoViewActivity", "Unable to take persistable permission", e);
             }
 
-            // Get input stream from the content URI
             InputStream inputStream = getContentResolver().openInputStream(sourceUri);
             if (inputStream == null) return null;
 
-            // Create output file in app's files directory
             File outputDir = getApplicationContext().getFilesDir();
             File outputFile = new File(outputDir, fileName);
 
-            // Copy the file
             FileOutputStream outputStream = new FileOutputStream(outputFile);
             byte[] buffer = new byte[4096];
             int bytesRead;
@@ -173,15 +166,11 @@ public class PhotoViewActivity extends AppCompatActivity {
             inputStream.close();
             outputStream.close();
 
-            Log.d("PhotoViewActivity", "Saved image to: " + outputFile.getAbsolutePath());
-
-            // If this method is called in a context where currentPhoto is available
             if (currentPhoto != null && originalFileName != null && !originalFileName.isEmpty()) {
                 currentPhoto.setTitle(originalFileName);
                 Log.d("PhotoViewActivity", "Set photo title to original filename: " + originalFileName);
             }
 
-            // Return the new URI that points to your app's private storage
             return Uri.fromFile(outputFile);
         } catch (IOException e) {
             Log.e("PhotoViewActivity", "Error saving image", e);
@@ -189,12 +178,11 @@ public class PhotoViewActivity extends AppCompatActivity {
         }
     }
 
-    // Helper method to get file extension
+    //
     private String getFileExtension(Uri uri) {
         String extension = null;
 
         try {
-            // First try to get from ContentResolver for content URIs
             if ("content".equals(uri.getScheme())) {
                 String mimeType = getContentResolver().getType(uri);
                 if (mimeType != null) {
@@ -202,7 +190,6 @@ public class PhotoViewActivity extends AppCompatActivity {
                 }
             }
 
-            // If that didn't work, try from the path
             if (extension == null) {
                 String path = uri.getPath();
                 if (path != null) {
@@ -213,12 +200,10 @@ public class PhotoViewActivity extends AppCompatActivity {
                 }
             }
 
-            // Default extension if we couldn't determine it
             if (extension == null) {
                 extension = "jpg";
             }
 
-            // Normalize extensions
             extension = extension.toLowerCase();
             if (extension.equals("jpeg")) {
                 extension = "jpg";
@@ -226,13 +211,13 @@ public class PhotoViewActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             Log.e("PhotoViewActivity", "Error getting file extension", e);
-            extension = "jpg"; // Default
+            extension = "jpg";
         }
 
         return extension;
     }
 
-    // Function to display the current photo
+    //
     private void displayPhoto() {
         if (albumPhotos.isEmpty()) {
             Toast.makeText(this, "No photos to display", Toast.LENGTH_SHORT).show();
@@ -241,18 +226,11 @@ public class PhotoViewActivity extends AppCompatActivity {
         }
 
         currentPhoto = albumPhotos.get(currentPhotoPosition);
-
-        // get album name that currentPhoto is in
         String albumname = currentPhoto.getAlbumName();
-
-        // Update toolbar title
         toolbar.setTitle(currentPhoto.getTitle() + " - " + albumname);
 
-        // Load image from URI
         try {
             Uri photoUri = Uri.parse(currentPhoto.getPath());
-            Log.d("PhotoViewActivity", "Loading photo from URI: " + photoUri.toString());
-
             // Check if this is a Photo Picker URI
             if (photoUri.toString().contains("content://media/picker")) {
                 try {
@@ -299,7 +277,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         updateTagsDisplay();
     }
 
-    // Function to navigate to previous photo
+
     private void showPreviousPhoto() {
         if (currentPhotoPosition > 0) {
             currentPhotoPosition--;
@@ -307,7 +285,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         }
     }
 
-    // Function to navigate to next photo
+
     private void showNextPhoto() {
         if (currentPhotoPosition < albumPhotos.size() - 1) {
             currentPhotoPosition++;
@@ -315,8 +293,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         }
     }
 
-    // Function to show photo options dialog
-// Function to show photo options dialog
+
     private void showPhotoOptionsDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_photo_options, null);
         AlertDialog dialog = new AlertDialog.Builder(this)
@@ -348,15 +325,17 @@ public class PhotoViewActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    //
     private void savePhotoToGallery() {
         Photo currentPhoto = albumPhotos.get(currentPhotoPosition);
         Uri photoUri = Uri.parse(currentPhoto.getPath());
 
         try {
-            String fileExtension = getFileExtension(photoUri);
+            String fileExtension = currentPhoto.getFileExtension();
+
+
             String mimeType;
 
-            // Determine MIME type from extension
             switch (fileExtension.toLowerCase()) {
                 case "png":
                     mimeType = "image/png";
@@ -371,22 +350,18 @@ public class PhotoViewActivity extends AppCompatActivity {
                     mimeType = "image/jpeg"; // Default to JPEG
             }
 
-            Log.d("PhotoViewActivity", "Saving photo with MIME type: " + mimeType);
 
-            // Get input stream from the source URI
             InputStream inputStream = getContentResolver().openInputStream(photoUri);
             if (inputStream == null) {
                 Toast.makeText(this, "Failed to access photo", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Create values for the new image
             ContentValues values = new ContentValues();
             values.put(MediaStore.Images.Media.DISPLAY_NAME, currentPhoto.getTitle() + "." + fileExtension);
             values.put(MediaStore.Images.Media.MIME_TYPE, mimeType);
             values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
 
-            // Insert the image
             Uri insertUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             if (insertUri != null) {
                 try (OutputStream out = getContentResolver().openOutputStream(insertUri)) {
@@ -409,14 +384,13 @@ public class PhotoViewActivity extends AppCompatActivity {
     }
 
 
-    // Function to show add tag dialog
+    //
     private void showAddTagDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_tag, null);
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setView(dialogView)
                 .create();
 
-        // Set up tag type dropdown
         AutoCompleteTextView tagTypeDropdown = dialogView.findViewById(R.id.tag_type_dropdown);
         String[] tagTypes = {Photo.TAG_PERSON, Photo.TAG_LOCATION};
         ArrayAdapter<String> tagTypeAdapter = new ArrayAdapter<>(
@@ -451,7 +425,6 @@ public class PhotoViewActivity extends AppCompatActivity {
     }
 
 
-    // Function to show remove tag dialog
     private void showRemoveTagDialog() {
         Map<String, List<String>> allTags = currentPhoto.getAllTags();
         List<String> tagItems = new ArrayList<>();
@@ -489,13 +462,11 @@ public class PhotoViewActivity extends AppCompatActivity {
                 .show();
     }
 
-    // Function to show delete photo confirmation
     private void showDeletePhotoConfirmation() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Photo")
                 .setMessage("Are you sure you want to delete this photo?")
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    // Return result to AlbumViewActivity to handle deletion
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("DELETED_POSITION", currentPhotoPosition);
                     setResult(RESULT_OK, resultIntent);
@@ -505,7 +476,7 @@ public class PhotoViewActivity extends AppCompatActivity {
                 .show();
     }
 
-    // Function to update tags display
+    //
     private void updateTagsDisplay() {
         StringBuilder tagsText = new StringBuilder();
         Map<String, List<String>> allTags = currentPhoto.getAllTags();
@@ -537,30 +508,19 @@ public class PhotoViewActivity extends AppCompatActivity {
         }
     }
 
-    // Function to save photo changes
+
     private void savePhotoChanges() {
-        // In a real app, this would save changes to persistent storage
-        Log.d("PhotoViewActivity", "222Current Album Thumbnail: " + currentPhoto.getPath());
-
         Intent resultIntent = new Intent();
-        Log.d("PhotoViewActivity", "333Current Album Thumbnail: " + currentPhoto.getPath());
         resultIntent.putExtra("UPDATED_PHOTO", currentPhoto);
-        Log.d("PhotoViewActivity", "444Current Album Thumbnail: " + currentPhoto.getPath());
         resultIntent.putExtra("UPDATED_POSITION", currentPhotoPosition);
-        Log.d("PhotoViewActivity", "5555Current Album Thumbnail: " + currentPhoto.getPath());
         setResult(RESULT_OK, resultIntent);
-        Log.d("PhotoViewActivity", "66Current Album Thumbnail: " + currentPhoto.getPath());
-
     }
 
 
     @Override
     public void onBackPressed() {
-        //print out current album thumbnail
-        Log.d("PhotoViewActivity", "111Current Album Thumbnail: " + currentPhoto.getPath());
         savePhotoChanges();
         super.onBackPressed();
-        Log.d("PhotoViewActivity", "7777Current Album Thumbnail: " + currentPhoto.getPath());
         finish();
     }
 }

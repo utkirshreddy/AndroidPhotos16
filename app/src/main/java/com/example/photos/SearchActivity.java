@@ -29,11 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Search Activity - Allows searching photos by tags across all albums
- * Supports searching by tag type-value pairs with AND/OR logic
- * Displays matching photos in a grid view
- */
+
 public class SearchActivity extends AppCompatActivity {
 
     // UI Components
@@ -49,12 +45,10 @@ public class SearchActivity extends AppCompatActivity {
     private TextView emptyResultsView;
 
     // Data
-    private List<SearchCriteria> searchCriteriaItems;
     private List<Photo> searchResults;
     private Set<String> availableTagValues;
     private List<Album> albums;
     private List<Photo> allPhotos;
-    private CriteriaAdapter criteriaAdapter;
     private PhotoAdapter photoAdapter;
 
     // Search logic
@@ -72,13 +66,11 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        // Get albums from intent
         albums = (List<Album>) getIntent().getSerializableExtra("ALBUM_LIST");
         if (albums == null) {
             albums = new ArrayList<>();
         }
 
-        // Initialize UI components
         Toolbar toolbar = findViewById(R.id.search_toolbar);
         searchModeGroup = findViewById(R.id.search_mode_group);
         multipleSearchSection = findViewById(R.id.multiple_search_section);
@@ -92,21 +84,17 @@ public class SearchActivity extends AppCompatActivity {
         resultsTitle = findViewById(R.id.results_title);
         emptyResultsView = findViewById(R.id.empty_results_view);
 
-        // Set up toolbar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
-        // Initialize data lists
         searchResults = new ArrayList<>();
         availableTagValues = new HashSet<>();
         allPhotos = new ArrayList<>();
 
-        // Load all photos and tag values
         loadAllPhotos();
         loadAvailableTagValues();
 
-        // Set up tag type dropdowns
         String[] tagTypes = {Photo.TAG_PERSON, Photo.TAG_LOCATION};
         ArrayAdapter<String> tagTypeAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_dropdown_item_1line, tagTypes);
@@ -122,7 +110,6 @@ public class SearchActivity extends AppCompatActivity {
         tagTypeInput2.setThreshold(1);
         tagValueInput2.setThreshold(1);
 
-        // Set up tag value auto-complete
         tagTypeInput.setOnItemClickListener((parent, view, position, id) -> {
             updateTagValueAdapter(tagValueInput, tagTypes[position]);
         });
@@ -131,28 +118,23 @@ public class SearchActivity extends AppCompatActivity {
             updateTagValueAdapter(tagValueInput2, tagTypes[position]);
         });
 
-        // Initialize with values for the first dropdown
         updateTagValueAdapter(tagValueInput, tagTypes[0]);
         updateTagValueAdapter(tagValueInput2, tagTypes[0]);
 
-        // Set up search mode selection
         searchModeGroup.setOnCheckedChangeListener((group, checkedId) -> {
             isMultipleSearch = checkedId == R.id.radio_multiple_tags;
             multipleSearchSection.setVisibility(isMultipleSearch ? View.VISIBLE : View.GONE);
         });
 
-        // Set up conjunction group listener
         conjunctionGroup.setOnCheckedChangeListener((group, checkedId) -> {
             useAndLogic = checkedId == R.id.radio_and;
         });
 
-        // Set up results adapter
         photoAdapter = new PhotoAdapter(this, searchResults);
         searchResultsRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         searchResultsRecyclerView.setAdapter(photoAdapter);
 
         photoAdapter.setOnPhotoClickListener(position -> {
-            // Handle photo click - view the photo
             Photo selectedPhoto = searchResults.get(position);
             Intent intent = new Intent(SearchActivity.this, PhotoViewActivity.class);
             ArrayList<Photo> photoList = new ArrayList<>(searchResults);
@@ -161,20 +143,17 @@ public class SearchActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Set up search button
         btnSearch.setOnClickListener(v -> performSearch());
     }
 
+
     private void updateTagValueAdapter(AutoCompleteTextView inputField, String tagType) {
-        // Use a HashSet to collect unique tag values
         Set<String> uniqueTagValues = new HashSet<>();
 
         for (Photo photo : allPhotos) {
-            // Add all tags of the specified type to our unique set
             uniqueTagValues.addAll(photo.getTagsOfType(tagType));
         }
 
-        // Convert the Set back to a List for the adapter
         List<String> tagValues = new ArrayList<>(uniqueTagValues);
 
         ArrayAdapter<String> tagValueAdapter = new ArrayAdapter<>(
@@ -183,7 +162,6 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void performSearch() {
-        // Clear previous results
         searchResults.clear();
 
         if (isMultipleSearch) {
@@ -192,7 +170,6 @@ public class SearchActivity extends AppCompatActivity {
             performSingleTagSearch();
         }
 
-        // Update UI
         photoAdapter.notifyDataSetChanged();
         resultsTitle.setVisibility(View.VISIBLE);
 
@@ -237,12 +214,10 @@ public class SearchActivity extends AppCompatActivity {
             boolean matches2 = photo.hasTag(tagType2, tagValue2);
 
             if (useAndLogic) {
-                // AND logic - both tags must match
                 if (matches1 && matches2) {
                     searchResults.add(photo);
                 }
             } else {
-                // OR logic - either tag can match
                 if (matches1 || matches2) {
                     searchResults.add(photo);
                 }
@@ -251,63 +226,6 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 
-
-
-    // Class to hold search criteria
-    private static class SearchCriteria {
-        String tagType;
-        String tagValue;
-
-        public SearchCriteria(String tagType, String tagValue) {
-            this.tagType = tagType;
-            this.tagValue = tagValue;
-        }
-    }
-
-    // Function to add search criteria
-    private void addSearchCriteria() {
-        String tagType = tagTypeInput.getText().toString().trim();
-        String tagValue = tagValueInput.getText().toString().trim();
-
-        if (tagValue.isEmpty()) {
-            Toast.makeText(this, "Tag value cannot be empty", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Add to criteria list
-        SearchCriteria criteria = new SearchCriteria(tagType, tagValue);
-        searchCriteriaItems.add(criteria);
-        criteriaAdapter.notifyItemInserted(searchCriteriaItems.size() - 1);
-
-        // Clear input
-        tagValueInput.setText("");
-    }
-
-    // Function to remove search criteria
-    private void removeSearchCriteria(int position) {
-        searchCriteriaItems.remove(position);
-        criteriaAdapter.notifyItemRemoved(position);
-    }
-
-    private boolean matchesAllCriteria(Photo photo) {
-        for (SearchCriteria criteria : searchCriteriaItems) {
-            if (!photo.hasTag(criteria.tagType, criteria.tagValue)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean matchesAnyCriteria(Photo photo) {
-        for (SearchCriteria criteria : searchCriteriaItems) {
-            if (photo.hasTag(criteria.tagType, criteria.tagValue)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // Function to load all photos from all albums
     private void loadAllPhotos() {
         allPhotos.clear();
         for (Album album : albums) {
@@ -315,7 +233,6 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    // Function to gather all available tag values for auto-completion
     private void loadAvailableTagValues() {
         availableTagValues.clear();
         for (Photo photo : allPhotos) {
@@ -326,59 +243,5 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    // Function to filter tag values based on input prefix
-    private List<String> getMatchingTagValues(String prefix) {
-        List<String> matches = new ArrayList<>();
-        if (prefix == null || prefix.isEmpty()) {
-            return matches;
-        }
 
-        String normalizedPrefix = prefix.toLowerCase();
-        for (String value : availableTagValues) {
-            if (value.toLowerCase().startsWith(normalizedPrefix)) {
-                matches.add(value);
-            }
-        }
-        return matches;
-    }
-
-    // Adapter for search criteria items
-    private class CriteriaAdapter extends RecyclerView.Adapter<CriteriaAdapter.CriteriaViewHolder> {
-
-        @NonNull
-        @Override
-        public CriteriaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(android.R.layout.simple_list_item_2, parent, false);
-            return new CriteriaViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull CriteriaViewHolder holder, int position) {
-            SearchCriteria criteria = searchCriteriaItems.get(position);
-            holder.text1.setText(criteria.tagType + ": " + criteria.tagValue);
-            holder.text2.setText(position > 0 ? (useAndLogic ? getString(R.string.and) : getString(R.string.or)) : "");
-
-            holder.itemView.setOnLongClickListener(v -> {
-                removeSearchCriteria(holder.getAdapterPosition());
-                return true;
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return searchCriteriaItems.size();
-        }
-
-        class CriteriaViewHolder extends RecyclerView.ViewHolder {
-            TextView text1;
-            TextView text2;
-
-            public CriteriaViewHolder(@NonNull View itemView) {
-                super(itemView);
-                text1 = itemView.findViewById(android.R.id.text1);
-                text2 = itemView.findViewById(android.R.id.text2);
-            }
-        }
-    }
 }

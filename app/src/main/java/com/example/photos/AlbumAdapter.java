@@ -21,6 +21,8 @@ import com.example.photos.models.Photo;
 import java.io.IOException;
 import java.util.List;
 
+
+
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder> {
 
     private final Context context;
@@ -67,12 +69,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
         Album album = albums.get(position);
         holder.albumTitle.setText(album.getName());
 
-        // Try to load actual thumbnail if available
-
         String thumbnailPath = album.getThumbnailPath();
-        Log.d("AlbumAdapter", "Loading thumbnail for " + album.getName() + ": " + thumbnailPath);
 
-        // Check if thumbnailPath is null before trying to parse it
         if (thumbnailPath == null || thumbnailPath.isEmpty()) {
             holder.albumThumbnail.setImageResource(R.drawable.placeholder_album);
             return;
@@ -80,10 +78,10 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
 
         try {
             Uri thumbnailUri = Uri.parse(thumbnailPath);
+
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), thumbnailUri);
             holder.albumThumbnail.setImageBitmap(bitmap);
         } catch (SecurityException | IOException e) {
-            // Handle permission errors by using a placeholder
             holder.albumThumbnail.setImageResource(R.drawable.placeholder_album);
             Log.e("AlbumAdapter", "Error loading thumbnail for " + album.getName(), e);
         }
@@ -92,10 +90,6 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
     @Override
     public int getItemCount() {
         return albums.size();
-    }
-
-    public void refreshData() {
-        notifyDataSetChanged();
     }
 
     class AlbumViewHolder extends RecyclerView.ViewHolder {

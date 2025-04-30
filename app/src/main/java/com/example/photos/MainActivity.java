@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
             album.setName(newName);
             storageManager.saveAlbums(albums);
-            // Notify adapter about the change
+
             albumAdapter.setAlbums(albums);
             albumAdapter.notifyItemChanged(position);
             Toast.makeText(this, "Album renamed", Toast.LENGTH_SHORT).show();
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Delete", (dialog, which) -> {
                     albums.remove(position);
                     storageManager.saveAlbums(albums);
-                    // Notify adapter about the removed album
+
                     albumAdapter.setAlbums(albums);
                     albumAdapter.notifyItemRemoved(position);
                     updateEmptyView();
@@ -226,37 +226,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        // Reload albums from storage to get latest changes
         albums = storageManager.loadAlbums();
-
-        // Update the adapter with the new list
         albumAdapter.setAlbums(albums);
-
-        // Notify the adapter about the refreshed data
         albumAdapter.notifyDataSetChanged();
-
-        // Update UI based on albums list
         updateEmptyView();
-
-        // Log all album thumbnails
-        if (albums != null && !albums.isEmpty()) {
-            Log.d("AlbumDashboard", "--- Album Thumbnails ---");
-            for (int i = 0; i < albums.size(); i++) {
-                Album album = albums.get(i);
-                Log.d("TESTINGTESINGAlbumDashboard", "Album: " + album.getName() +
-                        ", Thumbnail: " + album.getThumbnailPath());
-            }
-            Log.d("AlbumDashboard", "------------------------");
-        }
-
-//        // Update album thumbnails
-//        for (Album album : albums) {
-//            try {
-//                album.updateThumbnail();
-//            } catch (Exception e) {
-//                Log.e("MainActivity", "Error updating thumbnail for album: " + album.getName(), e);
-//            }
-//        }
     }
 }

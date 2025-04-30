@@ -20,6 +20,8 @@ import com.example.photos.models.Photo;
 import java.io.IOException;
 import java.util.List;
 
+
+
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
 
     private final Context context;
@@ -60,25 +62,18 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         Photo photo = photos.get(position);
 
         holder.photoTitle.setText(photo.getTitle());
-        Log.d("PHOTOADAPT", "onBindViewHolder: " + photo.getPath());
-
 
         try {
             Uri photoUri = Uri.parse(photo.getPath());
             String extension = photo.getFileExtension().toLowerCase();
 
-
-            // Check if this is a Photo Picker URI
             if (photoUri.toString().contains("content://media/picker")) {
-                // For Photo Picker URIs, use a placeholder instead of trying to access
                 holder.photoThumbnail.setImageResource(R.drawable.placeholder_photo);
             } else {
-                // For other URIs, try to load normally
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), photoUri);
                 holder.photoThumbnail.setImageBitmap(bitmap);
             }
         } catch (SecurityException | IOException e) {
-            // Handle permission errors by using a placeholder
             holder.photoThumbnail.setImageResource(R.drawable.placeholder_photo);
             e.printStackTrace();
         }
@@ -89,7 +84,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         return photos.size();
     }
 
-    // set photo
     public void setPhotos(List<Photo> photos) {
         this.photos.clear();
         this.photos.addAll(photos);
@@ -120,7 +114,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 return false;
             });
 
-            // If using options button instead of long press
             if (photoOptions != null) {
                 photoOptions.setOnClickListener(v -> {
                     if (onPhotoLongClickListener != null) {
