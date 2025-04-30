@@ -50,6 +50,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         this.onPhotoLongClickListener = listener;
     }
 
+    // AI
     @NonNull
     @Override
     public PhotoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -57,6 +58,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         return new PhotoViewHolder(view);
     }
 
+    // AI Mixed
     @Override
     public void onBindViewHolder(@NonNull PhotoViewHolder holder, int position) {
         Photo photo = photos.get(position);
@@ -90,6 +92,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         notifyDataSetChanged();
     }
 
+    // AI
     class PhotoViewHolder extends RecyclerView.ViewHolder {
         ImageView photoThumbnail;
         TextView photoTitle;

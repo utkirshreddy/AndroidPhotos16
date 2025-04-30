@@ -65,6 +65,7 @@ public class AlbumViewActivity extends AppCompatActivity {
                 }
             });
 
+    // AI Mixed
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,7 +124,7 @@ public class AlbumViewActivity extends AppCompatActivity {
         updateUI();
     }
 
-    //
+    // AI
     private void showPhotoOptions(int position) {
         PopupMenu popup = new PopupMenu(this, photosRecyclerView.findViewHolderForAdapterPosition(position).itemView);
         popup.getMenuInflater().inflate(R.menu.photo_menu, popup.getMenu());
@@ -185,7 +186,7 @@ public class AlbumViewActivity extends AppCompatActivity {
     }
 
 
-    //
+    // AI Mixed
     private void showMovePhotoDialog(int photoPosition) {
         if (allAlbums.size() <= 1) {
             Toast.makeText(this, "No other albums available to move to", Toast.LENGTH_SHORT).show();
@@ -253,7 +254,7 @@ public class AlbumViewActivity extends AppCompatActivity {
         return false;
     }
 
-    //
+    // AI
     private void movePhoto(int position, Album targetAlbum) {
 
         Photo photoToMove = photos.get(position);
@@ -274,7 +275,7 @@ public class AlbumViewActivity extends AppCompatActivity {
 
 
 
-    //
+    // AI
     private void updateUI() {
         if (photos.isEmpty()) {
             photosRecyclerView.setVisibility(View.GONE);
@@ -441,7 +442,7 @@ public class AlbumViewActivity extends AppCompatActivity {
     }
 
 
-    //
+    // AI
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

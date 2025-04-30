@@ -30,6 +30,7 @@ public class AlbumSelectionAdapter extends RecyclerView.Adapter<AlbumSelectionAd
         this.listener = listener;
     }
 
+    // AI
     @NonNull
     @Override
     public AlbumSelectionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -48,6 +49,7 @@ public class AlbumSelectionAdapter extends RecyclerView.Adapter<AlbumSelectionAd
     public int getItemCount() {
         return albums.size();
     }
+
 
     class AlbumSelectionViewHolder extends RecyclerView.ViewHolder {
         TextView textView;

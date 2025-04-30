@@ -30,7 +30,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
     private OnAlbumClickListener onAlbumClickListener;
     private OnOptionsClickListener onOptionsClickListener;
 
-    // set albums
+
     public void setAlbums(List<Album> albums) {
         this.albums.clear();
         this.albums.addAll(albums);
@@ -64,6 +64,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
         return new AlbumViewHolder(view);
     }
 
+    // AI Mixed
     @Override
     public void onBindViewHolder(@NonNull AlbumViewHolder holder, int position) {
         Album album = albums.get(position);

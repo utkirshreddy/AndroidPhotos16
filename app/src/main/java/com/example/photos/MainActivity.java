@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private View emptyView;
     private StorageManager storageManager;
 
+    // AI Mixed
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // AI
     private void updateEmptyView() {
         boolean isAlbumListEmpty = albums.isEmpty();
 
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // AI Mixed
     private void showCreateAlbumDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_album, null);
         AlertDialog dialog = new AlertDialog.Builder(this)
@@ -119,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    // AI
     private void showAlbumOptionsMenu(int position) {
         Album album = albums.get(position);
 
@@ -138,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    // AI Mixed
     private void showRenameAlbumDialog(int position) {
         Album album = albums.get(position);
 
@@ -185,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    // AI Mixed
     private void showDeleteAlbumConfirmation(int position) {
         Album album = albums.get(position);
 

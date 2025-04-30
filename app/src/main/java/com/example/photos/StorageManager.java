@@ -28,6 +28,7 @@ public class StorageManager {
         this.gson = new Gson();
     }
 
+    // AI
     public void saveAlbums(List<Album> albums) {
         try {
             File file = new File(context.getFilesDir(), ALBUMS_FILE);
@@ -41,6 +42,7 @@ public class StorageManager {
         }
     }
 
+    // AI Mixed
     public List<Album> loadAlbums() {
         List<Album> albums = new ArrayList<>();
         try {

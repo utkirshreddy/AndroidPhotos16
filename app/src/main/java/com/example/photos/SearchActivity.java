@@ -32,7 +32,6 @@ import java.util.Set;
 
 public class SearchActivity extends AppCompatActivity {
 
-    // UI Components
     private Toolbar toolbar;
     private AutoCompleteTextView tagTypeInput;
     private AutoCompleteTextView tagValueInput;
@@ -44,14 +43,12 @@ public class SearchActivity extends AppCompatActivity {
     private TextView resultsTitle;
     private TextView emptyResultsView;
 
-    // Data
     private List<Photo> searchResults;
     private Set<String> availableTagValues;
     private List<Album> albums;
     private List<Photo> allPhotos;
     private PhotoAdapter photoAdapter;
 
-    // Search logic
     private boolean useAndLogic = false;
     private boolean isMultipleSearch = false;
 
@@ -61,6 +58,7 @@ public class SearchActivity extends AppCompatActivity {
     private AutoCompleteTextView tagValueInput2;
 
 
+    // AI MIxed
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,6 +145,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 
+    // AI Mixed
     private void updateTagValueAdapter(AutoCompleteTextView inputField, String tagType) {
         Set<String> uniqueTagValues = new HashSet<>();
 
@@ -161,6 +160,7 @@ public class SearchActivity extends AppCompatActivity {
         inputField.setAdapter(tagValueAdapter);
     }
 
+    // AI Mixed
     private void performSearch() {
         searchResults.clear();
 
@@ -233,6 +233,7 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
+    // AI
     private void loadAvailableTagValues() {
         availableTagValues.clear();
         for (Photo photo : allPhotos) {

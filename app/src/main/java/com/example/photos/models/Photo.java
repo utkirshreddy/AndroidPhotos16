@@ -39,7 +39,7 @@ public class Photo implements Serializable {
         this.albumId = albumId;
     }
 
-    // Getters and setters
+
     public String getId() {
         return id;
     }
@@ -63,6 +63,7 @@ public class Photo implements Serializable {
         this.albumId = albumId;
     }
 
+    // AI
     public String getFileExtension() {
         if (title == null || title.isEmpty()) {
             return "jpg";
@@ -82,6 +83,7 @@ public class Photo implements Serializable {
         return "jpg";
     }
 
+    // AI
     public String getAlbumName() {
         if (albumId == null || albumId.isEmpty()) {
             return "Unknown Album";
@@ -126,6 +128,7 @@ public class Photo implements Serializable {
     }
 
 
+    // AI Mixed
     public boolean addTag(String tagType, String tagValue) {
         if (!isValidTagType(tagType) || tagValue == null || tagValue.trim().isEmpty()) {
             return false;
@@ -182,6 +185,8 @@ public class Photo implements Serializable {
 
         for (int i = 0; i < tagsForType.size(); i++) {
             String currentTag = tagsForType.get(i);
+
+
             if (currentTag.equalsIgnoreCase(tagValue)) {
                 return true;
             }
