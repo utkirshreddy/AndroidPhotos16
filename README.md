@@ -1,5 +1,8 @@
 # AndroidPhotos16
 
+### HOW TO RUN:
+Upload project into Android Studio, and wait for gradle to fully build the project. This should be automatic. Afterwards, you can just click run.
+
 ### Notes:
 - Saving to gallery is not automatic. It may take a second to load into the photos gallery
 
