@@ -290,6 +290,7 @@ public class AlbumViewActivity extends AppCompatActivity {
         getContent.launch("image/*");
     }
 
+    // AI Mixed
     private void addPhotoFromUri(Uri uri) {
         try {
 
@@ -343,6 +344,7 @@ public class AlbumViewActivity extends AppCompatActivity {
     }
 
 
+    // AI
     private Uri saveImageToAppStorage(Uri sourceUri) {
         try {
 
@@ -371,6 +373,7 @@ public class AlbumViewActivity extends AppCompatActivity {
         }
     }
 
+    // AI Mixed
     private void savePhotoToGallery(Photo currentPhoto) {
         Uri photoUri = Uri.parse(currentPhoto.getPath());
 
@@ -428,6 +431,7 @@ public class AlbumViewActivity extends AppCompatActivity {
         }
     }
 
+    // AI
     private void openPhotoView(int position) {
         if (position >= 0 && position < photos.size()) {
             Intent intent = new Intent(this, PhotoViewActivity.class);

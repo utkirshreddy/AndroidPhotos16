@@ -50,7 +50,7 @@ public class AlbumSelectionAdapter extends RecyclerView.Adapter<AlbumSelectionAd
         return albums.size();
     }
 
-
+    // AI Mixed
     class AlbumSelectionViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
 
