@@ -93,6 +93,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
         return albums.size();
     }
 
+    // AI Mixed
     class AlbumViewHolder extends RecyclerView.ViewHolder {
         ImageView albumThumbnail;
         TextView albumTitle;
