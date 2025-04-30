@@ -45,7 +45,6 @@ import com.bumptech.glide.Glide;
 
 public class PhotoViewActivity extends AppCompatActivity {
 
-    // UI Components
     private Toolbar toolbar;
     private ImageView photoDisplay;
     private TextView photoTags;
@@ -53,15 +52,14 @@ public class PhotoViewActivity extends AppCompatActivity {
     private Button btnNext;
     private FloatingActionButton fabPhotoOptions;
 
-    // Data
     private List<Photo> albumPhotos;
     private int currentPhotoPosition;
     private Photo currentPhoto;
 
-    // Constants for intent extras
     public static final String EXTRA_ALBUM_PHOTOS = "album_photos";
     public static final String EXTRA_PHOTO_POSITION = "photo_position";
 
+    // AI Mixed
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,7 +98,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         displayPhoto();
     }
 
-    //
+    // AI
     private String getOriginalFileName(Uri uri) {
         String result = null;
         if ("content".equals(uri.getScheme())) {
@@ -128,7 +126,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         return result;
     }
 
-    //
+    // AI
     private Uri saveImageToAppStorage(Uri sourceUri) {
         try {
             String originalFileName = getOriginalFileName(sourceUri);
@@ -178,7 +176,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         }
     }
 
-    //
+    // AI Mixed
     private String getFileExtension(Uri uri) {
         String extension = null;
 
@@ -217,7 +215,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         return extension;
     }
 
-    //
+    // AI Mixed
     private void displayPhoto() {
         if (albumPhotos.isEmpty()) {
             Toast.makeText(this, "No photos to display", Toast.LENGTH_SHORT).show();
@@ -325,7 +323,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    //
+    // AI Mixed
     private void savePhotoToGallery() {
         Photo currentPhoto = albumPhotos.get(currentPhotoPosition);
         Uri photoUri = Uri.parse(currentPhoto.getPath());
@@ -384,7 +382,7 @@ public class PhotoViewActivity extends AppCompatActivity {
     }
 
 
-    //
+    // AI Mixed
     private void showAddTagDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_tag, null);
         AlertDialog dialog = new AlertDialog.Builder(this)
@@ -476,7 +474,7 @@ public class PhotoViewActivity extends AppCompatActivity {
                 .show();
     }
 
-    //
+    // AI Mixed
     private void updateTagsDisplay() {
         StringBuilder tagsText = new StringBuilder();
         Map<String, List<String>> allTags = currentPhoto.getAllTags();
@@ -509,6 +507,7 @@ public class PhotoViewActivity extends AppCompatActivity {
     }
 
 
+    // AI
     private void savePhotoChanges() {
         Intent resultIntent = new Intent();
         resultIntent.putExtra("UPDATED_PHOTO", currentPhoto);
