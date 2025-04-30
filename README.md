@@ -5,6 +5,7 @@ Upload project into Android Studio, and wait for gradle to fully build the proje
 
 ### Notes:
 - Saving to gallery is not automatic. It may take a second to load into the photos gallery
+- If the same photo is in two different albums and has the same tags, when searching by tags, both of the photos will appear if the tags match. The album they are a part of is displayed when the photo is viewed to differentiate them. We allowed this since the write up mentions that photos are independent of each other in different albums. So, in this instance, the photos are not the same, thus both will show up.  
 
 
 ### AI Use:
