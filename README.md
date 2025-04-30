@@ -6,7 +6,7 @@
 
 ### AI Use:
 
-Here are the prompts that I used to generate the following code
+Here are the prompts that I used to generate portions of our code
 
 1. I am building a photos app in android studio with java. I have attached the UI that I would like to use for this application. Create the first UI for the home page in xml, paying close attention to every detail and note that I included within the drawing. (similar prompt for the other UI images)
 2. In the home UI, there is a button that allows the user to create an album. I already have the design of the tile that should appear when the album is created. Implement this feature where the user should be able to make the album, set the title, and put the tile on the home page. Then this album should be able to save to the app's storage.
