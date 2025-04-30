@@ -17,8 +17,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class StorageManager {
     private static final String TAG = "StorageManager";
     private static final String ALBUMS_FILE = "albums.json";
@@ -61,7 +59,6 @@ public class StorageManager {
 
             Type type = new TypeToken<List<Album>>(){}.getType();
             albums = gson.fromJson(json.toString(), type);
-            Log.d(TAG, "Albums loaded successfully: " + albums.size());
         } catch (IOException e) {
             Log.e(TAG, "Error loading albums", e);
         }

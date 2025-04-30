@@ -12,6 +12,7 @@ import com.example.photos.models.Album;
 
 import java.util.List;
 
+
 public class AlbumSelectionAdapter extends RecyclerView.Adapter<AlbumSelectionAdapter.AlbumSelectionViewHolder> {
 
     private final List<Album> albums;
