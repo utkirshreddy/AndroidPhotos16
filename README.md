@@ -1,4 +1,4 @@
-# AndroidPhotos16
+# Android Photos Gallery Application
 
 Utkirsh Reddy & Griffin Barnes
 
